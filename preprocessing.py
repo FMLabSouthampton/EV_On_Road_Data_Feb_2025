@@ -90,22 +90,22 @@ def process_gpsp(data: dict) -> dict:
     lat = d1[-7:] + d2 + d3 + d4[:5]                # extracting relevant portion of binary string
     lat = int(lat[::-1], 2) * 0.000001 - 90         # converting from binary to decimal and into degrees
 
-    long = d4[-3:] + d5 + d6 + d7 + d8[:2]          # extracting relevant portion of binary string
-    long = int(long[::-1], 2) * 0.000001 - 180      # converting from binary to decimal and into degrees
+    lng = d4[-3:] + d5 + d6 + d7 + d8[:2]          # extracting relevant portion of binary string
+    lng = int(lng[::-1], 2) * 0.000001 - 180       # converting from binary to decimal and into degrees
 
     acc = int(d8[-6:][::-1], 2)
 
-    data.update({"PositionValid": pos_valid, "Latitude(deg)": lat, "Longitude(deg)": long, "PositionAccuracy(m)": acc})
+    data.update({"PositionValid": pos_valid, "Latitude": lat, "Longitude": lng, "PositionAccuracy": acc})
     return data
 
 
-# Converting raw gpsaltitude data to readable PositionValid, Altitude(m), and Accuracy(m)
+# Converting raw gpsaltitude data to readable AltitudeValid, Altitude(m), and Accuracy(m)
 def process_gpsa(data: dict) -> dict:
-    d = [data["DataBytes"][i:i + 2] for i in range(0, 8, 2)]   # separating databytes field into individual hex values
+    d = [data["DataBytes"][i:i + 2] for i in range(0, 8, 2)]    # separating databytes field into individual hex values
     d = [bin(int(i, 16))[2:].zfill(8)[::-1] for i in d]         # converting each hex to binary and reversing
     d1, d2, d3, d4 = d
 
-    pos_valid = d1[::-1][0]   # most significant bit of d1
+    pos_valid = d1[::-1][0]                         # most significant bit of d1
 
     alt = d1[-7:] + d2 + d3[:3]                     # extracting relevant portion of binary string
     alt = int(alt[::-1], 2) * 0.1 - 6000            # converting from binary to decimal and into meters
@@ -113,7 +113,7 @@ def process_gpsa(data: dict) -> dict:
     acc = d3[-5:] + d4                              # extracting relevant portion of binary string
     acc = int(acc[::-1], 2)                         # converting from binary to decimal
 
-    data.update({"PositionValid": pos_valid, "Altitude(m)": alt, "PositionAccuracy(m)": acc})
+    data.update({"AltitudeValid": pos_valid, "Altitude": alt, "AltitudeAccuracy": acc})
     return data
 
 
